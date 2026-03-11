@@ -30,8 +30,6 @@
 
 更多使用与开发文档请查阅[Wiki Document](https://github.com/Practice3DVision/SLMaster/wiki)。
 
-付费咨询/项目合作请加QQ：`1369215984`。
-
 ## 依赖 🍁
 **SLMaster**依赖的库包含如下几点：
 - [FluentUI](https://github.com/Practice3DVision/SLMaster/tree/master/FluentUI)`V1.5.6`（项目内包含）
