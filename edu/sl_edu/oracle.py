@@ -67,7 +67,8 @@ def cross_check_opencv(imgs: list[np.ndarray], cfg: dict | None = None
     params.horizontal = cfg["horizontal"]
     pat = cv2.structured_light.SinusoidalPattern.create(params)
     try:
-        wrapped = pat.computePhaseMap(imgs[: cfg["shift_time"]])
+        out = pat.computePhaseMap(imgs[: cfg["shift_time"]])
     except cv2.error:
         return None
+    wrapped = out[0] if isinstance(out, tuple) else out  # (wrapped, shadowMask)
     return wrapped if wrapped.size else None
