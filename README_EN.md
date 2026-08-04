@@ -41,6 +41,29 @@ The libraries that **SLMaster** depends on include the following points:
 
 > If the computer does not have an NVIDIA GPU, the software can still use the CPU to accelerate and run effectively, and there is no need to rely on `opencv_contribute`.
 
+## Supported Hardware 🧩
+**SLMaster** abstracts the **camera** and the **projector**, so you can adapt the software to your own hardware by implementing the abstract interfaces. Hardware supported out of the box:
+- Cameras: Huaray cameras (via the `MVViewer` SDK)
+- Projectors: DLP34XX series (`DLP3010`, `DLP4710`)
+
+## Project Structure 📂
+- `data`: offline datasets
+  - `4_4710`: test data for projector firmware burning
+  - `binocularCamera`: real dataset from a binocular structured light camera
+  - `monocularCamera`: real dataset from a monocular structured light camera
+  - `laserLine`: single-line laser camera dataset
+  - `interzoneFourGrayscale`: simulation dataset for the four-grayscale generalized interzone phase-unwrapping method
+  - `shiftGraycode`: simulation dataset for the shift gray-code method
+  - `threeFrequencyHeterodyne`: simulation dataset for the three-frequency heterodyne method
+- `src`: algorithm sources
+  - `algorithm`: structured light algorithms (CPU + CUDA)　`calibration`: calibration algorithms
+  - `cameras`: structured light cameras (mono/binocular/trinocular)　`device`: hardware control (camera/projector abstraction)
+- `gui`: application UI
+  - `qml`: Qt QML files and resources (`qml/res/config` holds the camera configuration files)
+  - `src`: UI sources (including node-editor nodes)
+  - `thirdParty`: bundled third-party libraries (FluentUI, QuickQanava)
+- `test`: accuracy tests (google_test)　`perf`: performance benchmarks (google_benchmark)
+
 ## Build 🚀
 After obtaining the code from this library, first check the above dependencies. If the dependency conditions are not met, you can click on the above dependency library to jump to the corresponding library, then download its code and compile it. Taking the environment where none of the above libraries have been compiled and installed as an example, the compilation order is as follows:
 
@@ -65,6 +88,20 @@ In offline use, you can test the offline reconstruction effect by entering `Scan
 If you need to change the algorithm parameters to test your offline dataset, please change the camera configuration file under the `installation directory/gui/qml/res/configuration`, which records all the states of the **3D camera**, including hardware composition, algorithm parameters, etc.
 
 If you need to connect hardware and perform online functions, please modify the camera configuration file under the `installation directory/gui/qml/res/configuration` to ensure that the hardware composition parameters are consistent with the hardware device you are using.
+
+### 3D Camera Control
+Open the `Device` page to switch between `Monocular`, `Binocular` and `Trinocular` structured light camera types. When a camera is online you can connect to it and run projection tests (single / continuous / pause / step / stop projection and the crosshair function). During projection the 2D cameras are set to the same exposure time, so you can view the captured stripes near real time and verify the current camera configuration.
+
+### Stripe Encoding
+Open the `Stripe Encoding` page to switch encoding methods and generate patterns. Main parameters:
+- **Pixel depth**: 1-bit / 8-bit
+- **Direction**: horizontal / vertical (direction of phase variation)
+- **Pattern type**: sinusoidal complementary gray code, three-frequency heterodyne, multi-view stereo geometry constraint, sinusoidal shift gray code, four-grayscale generalized interzone phase unwrapping
+- **Defocus encoding** (1-bit depth only): simple binarization, 2D error diffusion, optimal pulse-width modulation
+- **Size and cropping**: pixels beyond the projector's resolution are ignored, missing pixels are padded with 0; when the period width does not divide evenly, generate an integer number of periods on a slightly larger canvas and then crop to the actual projector resolution
+- **Periods and phase shifts**: with `n` periods, `log₂(n)` gray-code images are generated; for the complementary gray-code method, `log₂(n)+1` images
+- **Burning and saving**: select `keep previous encoded patterns` to burn multiple pattern sets in batches (required for projector calibration); generated patterns can be burned to the 3D camera on the `Device` page or saved offline via the `Save` button
+
 ## Examples  💡
 
 |function|example|function|example|
