@@ -4,7 +4,11 @@ project(algorithm)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(PCL REQUIRED)
+# Core algorithms only use pcl::PointCloud (pcl_common). Requesting all of
+# PCL drags pcl_visualization -> VTK -> Qt into a GUI-free core lib; on macOS
+# that ~150-dylib closure makes dyld take >60s to start a process.
+# Phase 2 (GUI) must re-extend this list with io/features/filters/visualization.
+find_package(PCL REQUIRED COMPONENTS common)
 find_package(Eigen3 REQUIRED)
 find_package(OpenCV COMPONENTS core cudev)
 

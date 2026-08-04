@@ -15,6 +15,9 @@
 #include "../common.h"
 
 #include <opencv2/opencv.hpp>
+// OpenCV5 no longer pulls geometry/calib3d into opencv.hpp;
+// calib3d.hpp exists on both 4.x and 5.x and declares cv::projectPoints.
+#include <opencv2/calib3d.hpp>
 #include <vector>
 
 namespace slmaster {

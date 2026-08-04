@@ -26,8 +26,9 @@ endif()
 option(BUILD_TEST "build the test case with google_test." ON)
 
 if(BUILD_TEST)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
-    message(NOTICE "[SLMaster]: build test case...")
+    message(STATUS "[SLMaster]: build test case...")
+    enable_testing()
+    add_subdirectory(test)
 endif()
 
 option(BUILD_PERF "build the perfermance case with google benchmark." ON)

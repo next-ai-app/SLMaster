@@ -58,10 +58,15 @@ add_executable(
     ${CMAKE_CURRENT_SOURCE_DIR}/testLaserLine.cpp
 )
 
+# testLaserLine writes point clouds via pcl::PLYWriter (pcl_io); the core lib
+# deliberately links only pcl_common.
+find_package(PCL REQUIRED COMPONENTS io)
+
 target_link_libraries(
     TestLasterLine
     PUBLIC
     slmaster
+    ${PCL_LIBRARIES}
     GTest::gtest_main
 )
 
@@ -103,19 +108,21 @@ target_link_libraries(
 
 include(GoogleTest)
 
-gtest_discover_tests(TestLasterLine)
-gtest_discover_tests(TestShiftGrayCodePattern)
-gtest_discover_tests(TestInterzoneSinusFourGrayscalePattern)
-gtest_discover_tests(TestThreeFrequencyHeterodynePattern)
+# Tests reference data via ../../data — resolves to the repo's data/ dir only
+# when cwd is the binary dir (build/<preset>).
+gtest_discover_tests(TestLasterLine WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+gtest_discover_tests(TestShiftGrayCodePattern WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+gtest_discover_tests(TestInterzoneSinusFourGrayscalePattern WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+gtest_discover_tests(TestThreeFrequencyHeterodynePattern WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 if(TARGET TestHuarayCamera)
-    gtest_discover_tests(TestHuarayCamera)
+    gtest_discover_tests(TestHuarayCamera WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 endif()
 
 if(TARGET TestProjectorDlpcApi4710)
-    gtest_discover_tests(TestProjectorDlpcApi4710)
+    gtest_discover_tests(TestProjectorDlpcApi4710 WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 endif()
 
 if(TARGET TestProjectorDlpcApi3010)
-    gtest_discover_tests(TestProjectorDlpcApi3010)
+    gtest_discover_tests(TestProjectorDlpcApi3010 WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 endif()

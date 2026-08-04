@@ -60,22 +60,18 @@ class LaserLineSuit : public testing::Test {
 TEST_F(LaserLineSuit, testStegerExtract) {
     vector<Point2f> outPoints;
     stegerExtract(img, outPoints, mask);
-    
-    Mat colorImg;
-    cvtColor(img, colorImg, COLOR_GRAY2BGR);
 
     FileStorage pointFile("point.yml", FileStorage::WRITE);
 
     int index = 0;
     for (auto point : outPoints) {
-        circle(colorImg, Point2i(point.x, point.y), 1, Scalar(0, 0, 255));
         Mat pointMat(point);
         pointFile << "Point" + to_string(index++) << pointMat;
     }
 
-    namedWindow("test", WINDOW_NORMAL);
-    imshow("test", colorImg);
-    waitKey(0);
+    // Upstream ended with imshow + waitKey(0) — hangs headless CI forever.
+    // The test previously had no assertions; verify extraction found points.
+    ASSERT_FALSE(outPoints.empty());
 }
 
 TEST_F(LaserLineSuit, testCalibration) {

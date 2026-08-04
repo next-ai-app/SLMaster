@@ -12,6 +12,9 @@
 #ifndef __CAMERA_FACTORY_H_
 #define __CAMERA_FACTORY_H_
 
+#include "typeDef.h"
+#include "camera.h"
+
 #include <string>
 #include <unordered_map>
 
