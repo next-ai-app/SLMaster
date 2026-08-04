@@ -40,6 +40,27 @@ def test_phase_to_col_and_depth_map():
     assert depth[80, 100] == 500.0 and depth[80, 200] == 600.0
 
 
+def test_depth_from_phase_matches_triangulation():
+    """reverseCamera-style per-pixel solve must agree with cv2 triangulation."""
+    K, d, R, T = _synthetic_setup()
+    PL = K @ np.hstack([np.eye(3), np.zeros((3, 1))])
+    PR = K @ np.hstack([R.T, (-R.T @ T).reshape(3, 1)])
+    pt = np.array([30.0, -10.0, 500.0])
+    # camera pixel of the point
+    cam_uv = K @ pt
+    cam_uv = cam_uv[:2] / cam_uv[2]
+    i, j = int(round(cam_uv[1])), int(round(cam_uv[0]))
+    # projector column of the point (vertical stripes): u in projector pixels
+    proj_pt = R.T @ (pt - T)
+    proj_uv = K @ proj_pt
+    u_proj = proj_uv[0] / proj_uv[2]
+    pitch = 60.0  # px per period
+    phase = np.zeros((480, 640), np.float32)
+    phase[i, j] = (u_proj / pitch) * 2 * np.pi
+    depth = reconstruct.depth_from_phase(phase, PL, PR, pitch)
+    assert abs(depth[i, j] - 500.0) < 5.0
+
+
 def test_save_ply_roundtrip(tmp_path):
     import open3d as o3d
 

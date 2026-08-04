@@ -49,6 +49,47 @@ def to_depth_map(points3d: np.ndarray, cam_points: np.ndarray,
     return depth
 
 
+def depth_from_phase(absolute_phase: np.ndarray, PL: np.ndarray,
+                     PR: np.ndarray, pitch: float,
+                     min_depth: float = 1.0, max_depth: float = 1e5,
+                     horizontal: bool = False) -> np.ndarray:
+    """Numpy port of the C++ reverseCamera(): per-pixel DLT depth recovery.
+
+    For each camera pixel (i, j) with absolute phase p:
+      uv = (p / 2pi) * pitch            -> projector column (vertical stripes)
+      solve 3x3 linear system from camera u/v lines + projector column plane
+    Returns z-depth map (0 where invalid). PL/PR: 3x4 projection matrices
+    (camera = K_cam @ [I|0], projector = K_proj @ [R|T], camera frame world).
+    """
+    rows, cols = absolute_phase.shape
+    depth = np.zeros((rows, cols), np.float32)
+    idx = 1 if horizontal else 0
+    for i in range(rows):
+        phase_row = absolute_phase[i]
+        for j in range(cols):
+            p = phase_row[j]
+            if p < 1e-3:
+                continue
+            uv = p / (2 * np.pi) * pitch
+            mapL = np.array([
+                [PL[0, 0] - PL[2, 0] * j, PL[0, 1] - PL[2, 1] * j,
+                 PL[0, 2] - PL[2, 2] * j],
+                [PL[1, 0] - PL[2, 0] * i, PL[1, 1] - PL[2, 1] * i,
+                 PL[1, 2] - PL[2, 2] * i],
+                [PR[idx, 0] - PR[2, 0] * uv, PR[idx, 1] - PR[2, 1] * uv,
+                 PR[idx, 2] - PR[2, 2] * uv]])
+            mapR = np.array([PL[2, 3] * j - PL[0, 3],
+                             PL[2, 3] * i - PL[1, 3],
+                             PR[2, 3] * uv - PR[idx, 3]])
+            try:
+                pt = np.linalg.solve(mapL, mapR)
+            except np.linalg.LinAlgError:
+                continue
+            if min_depth < pt[2] < max_depth:
+                depth[i, j] = pt[2]
+    return depth
+
+
 def save_ply(path: str | Path, xyz: np.ndarray,
              colors: np.ndarray | None = None) -> Path:
     """Save (N,3) points (+ optional (N,3) RGB) via open3d."""
