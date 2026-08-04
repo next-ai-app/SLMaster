@@ -30,7 +30,7 @@ def wrapped_phase(phase_imgs: list[np.ndarray], shift_time: int) -> np.ndarray:
 
 def floor_map(gray_imgs: list[np.ndarray], confidence: np.ndarray,
               wrapped: np.ndarray, n_periods: int, threshold: float,
-              horizontal: bool) -> np.ndarray:
+ horizontal: bool = False) -> np.ndarray:
     """Gray->binary (running XOR, MSB first), then period-edge correction.
 
     Vertical-stripe correction (horizontal=False) is implemented; the

@@ -1,3 +1,5 @@
 .venv/
 __pycache__/
 *.egg-info/
+output_scan.ply
+.ipynb_checkpoints/
