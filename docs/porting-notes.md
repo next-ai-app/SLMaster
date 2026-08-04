@@ -48,3 +48,20 @@ Newest entries at the bottom. Each entry: symptom → root cause → fix (commit
     → Removed GUI block + `circle()` debug drawing; added `ASSERT_FALSE(outPoints.empty())`.
 
 **Result: 13/13 tests pass on macOS 26.5.2 arm64, OpenCV 5.0.0, PCL 1.15 (brew).** Also fixed en route: `gtest_discover_tests(... WORKING_DIRECTORY ${CMAKE_BINARY_DIR})` so `../../data` resolves to the repo's datasets.
+
+## 2026-08-05 — Phase 3 universal backends
+
+13. **`SafeQueue::pop()` is not value-returning** — signature is `void pop(T& item)`; `return imgs_.pop()` fails to compile.
+    → `try_move_pop(img)` + return (same as Huaray backend).
+
+14. **27 hardcoded `"Huaray" ? Huaray : Halcon` ternaries** in `src/cameras/{monocular,binocular,trinocular}` — adding a third backend via config string was impossible (unknown strings silently mapped to Halcon).
+    → `CameraFactory::manufactorFromString()` helper; all 27 call sites replaced.
+
+15. **Zero-hardware camera testing** — `cv::VideoCapture` accepts printf-style image-sequence URIs (`../../data/shiftGraycode/%d.bmp`), so the `OpenCvCamera` backend is testable end-to-end with the bundled datasets (no webcam, works headless in CI).
+
+16. **`MonitorProjector` headless design** — OpenCV highgui windows can't open without a display server (CI) and Cocoa demands the main thread (macOS).
+    → Virtual-display mode (`setVirtualDisplay(true)` or `SLMASTER_MONITOR_VIRTUAL=1`) keeps accurate pattern timing without any window; `currentPattern()`/`projectedCount()` hooks make the projector testable and simulation-ready; auto-fallback to virtual when window creation throws.
+
+17. **Monitor timing floor** — an LCD can't change pattern faster than one refresh; sub-16.7 ms exposures are clamped with a one-time stderr warning (virtual mode keeps exact timing for fast tests).
+
+**Result: 25/25 tests pass (13 prior + 12 new) in ~7 s on macOS arm64.**

@@ -92,9 +92,8 @@ void TrinocularCamera::parseArray(Json::Value &jsonVal, const bool isWrite) {
 
 SLCameraInfo TrinocularCamera::getCameraInfo() {
     const device::CameraFactory::CameraManufactor manufator =
-        stringProperties_["2D Camera Manufactor"] == "Huaray"
-            ? device::CameraFactory::Huaray
-            : device::CameraFactory::Halcon;
+        device::CameraFactory::manufactorFromString(
+            stringProperties_["2D Camera Manufactor"]);
     auto pLeftCamera = cameraFactory_.getCamera(
         stringProperties_["Left Camera Name"], manufator);
     auto pRightCamera = cameraFactory_.getCamera(
@@ -131,9 +130,8 @@ bool TrinocularCamera::connect() {
 
     try {
         const device::CameraFactory::CameraManufactor manufator =
-            stringProperties_["2D Camera Manufactor"] == "Huaray"
-                ? device::CameraFactory::Huaray
-                : device::CameraFactory::Halcon;
+            device::CameraFactory::manufactorFromString(
+            stringProperties_["2D Camera Manufactor"]);
         const bool connectLeftCamera =
             cameraFactory_
                 .getCamera(stringProperties_["Left Camera Name"], manufator)
@@ -231,9 +229,8 @@ bool TrinocularCamera::disConnect() {
     // TODO@Evans
     // Liu:中途篡改不正确的2D相机制造商将导致漏洞，系统会重新查找该制造商同ID相机
     const device::CameraFactory::CameraManufactor manufator =
-        stringProperties_["2D Camera Manufactor"] == "Huaray"
-            ? device::CameraFactory::Huaray
-            : device::CameraFactory::Halcon;
+        device::CameraFactory::manufactorFromString(
+            stringProperties_["2D Camera Manufactor"]);
     const bool disConnectLeftCamera =
         cameraFactory_
             .getCamera(stringProperties_["Left Camera Name"], manufator)
@@ -255,9 +252,8 @@ bool TrinocularCamera::disConnect() {
 
 bool TrinocularCamera::isConnect() {
     const device::CameraFactory::CameraManufactor manufator =
-        stringProperties_["2D Camera Manufactor"] == "Huaray"
-            ? device::CameraFactory::Huaray
-            : device::CameraFactory::Halcon;
+        device::CameraFactory::manufactorFromString(
+            stringProperties_["2D Camera Manufactor"]);
     const bool isConnectLeftCamera =
         cameraFactory_
             .getCamera(stringProperties_["Left Camera Name"], manufator)
@@ -333,9 +329,8 @@ bool TrinocularCamera::continuesCapture(SafeQueue<FrameData> &frameDataQueue) {
 
     imgCreateThread_ = std::thread([&] {
         const device::CameraFactory::CameraManufactor manufator =
-            stringProperties_["2D Camera Manufactor"] == "Huaray"
-                ? device::CameraFactory::Huaray
-                : device::CameraFactory::Halcon;
+            device::CameraFactory::manufactorFromString(
+            stringProperties_["2D Camera Manufactor"]);
         auto pLeftCamera = cameraFactory_.getCamera(
             stringProperties_["Left Camera Name"], manufator);
         auto pRightCamera = cameraFactory_.getCamera(
@@ -412,9 +407,8 @@ bool TrinocularCamera::stopContinuesCapture() {
     imgsCreated_.swap(emptyQueue);
 
     const device::CameraFactory::CameraManufactor manufator =
-        stringProperties_["2D Camera Manufactor"] == "Huaray"
-            ? device::CameraFactory::Huaray
-            : device::CameraFactory::Halcon;
+        device::CameraFactory::manufactorFromString(
+            stringProperties_["2D Camera Manufactor"]);
     cameraFactory_.getCamera(stringProperties_["Left Camera Name"], manufator)
         ->clearImgs();
     cameraFactory_.getCamera(stringProperties_["Right Camera Name"], manufator)
@@ -433,9 +427,8 @@ bool TrinocularCamera::offlineCapture(
 
 bool TrinocularCamera::capture(FrameData &frameData) {
     const device::CameraFactory::CameraManufactor manufator =
-        stringProperties_["2D Camera Manufactor"] == "Huaray"
-            ? device::CameraFactory::Huaray
-            : device::CameraFactory::Halcon;
+        device::CameraFactory::manufactorFromString(
+            stringProperties_["2D Camera Manufactor"]);
     auto pLeftCamera = cameraFactory_.getCamera(
         stringProperties_["Left Camera Name"], manufator);
     auto pRightCamera = cameraFactory_.getCamera(
@@ -649,9 +642,8 @@ bool TrinocularCamera::burnPatterns(const std::vector<cv::Mat> &imgs) {
 
 void TrinocularCamera::updateExposureTime() {
     const device::CameraFactory::CameraManufactor manufator =
-        stringProperties_["2D Camera Manufactor"] == "Huaray"
-            ? device::CameraFactory::Huaray
-            : device::CameraFactory::Halcon;
+        device::CameraFactory::manufactorFromString(
+            stringProperties_["2D Camera Manufactor"]);
     cameraFactory_.getCamera(stringProperties_["Color Camera Name"], manufator)
         ->setNumberAttribute("ExposureTime",
                              numbericalProperties_["Exposure Time"]);
@@ -666,9 +658,8 @@ void TrinocularCamera::updateExposureTime() {
 
 void TrinocularCamera::updateEnableDepthCamera() {
     const device::CameraFactory::CameraManufactor manufator =
-        stringProperties_["2D Camera Manufactor"] == "Huaray"
-            ? device::CameraFactory::Huaray
-            : device::CameraFactory::Halcon;
+        device::CameraFactory::manufactorFromString(
+            stringProperties_["2D Camera Manufactor"]);
     cameraFactory_.getCamera(stringProperties_["Color Camera Name"], manufator)
         ->setTrigMode(device::trigLine);
     cameraFactory_.getCamera(stringProperties_["Left Camera Name"], manufator)

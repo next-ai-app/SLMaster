@@ -18,9 +18,17 @@ else()
     set(SLMASTER_WITH_DLPC_DEFAULT OFF)
 endif()
 option(SLMASTER_WITH_DLPC "build DLPC347x projector backend" ${SLMASTER_WITH_DLPC_DEFAULT})
+# Monitor-as-projector backend — always available, pure OpenCV.
+option(SLMASTER_WITH_MONITOR "build monitor projector backend" ON)
+
+find_package(OpenCV REQUIRED)
 
 if(SLMASTER_WITH_DLPC)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/module/projector_dlpc_api)
+endif()
+
+if(SLMASTER_WITH_MONITOR)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/module/monitor_projector)
 endif()
 
 if(BUILD_SLMASTER_SHARED)
@@ -39,4 +47,10 @@ if(SLMASTER_WITH_DLPC)
     target_include_directories(projector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/module/projector_dlpc_api/include)
     target_link_libraries(projector PUBLIC projectorDlpcApi)
     target_compile_definitions(projector PUBLIC WITH_DLPC_PROJECTOR)
+endif()
+
+if(SLMASTER_WITH_MONITOR)
+    target_include_directories(projector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/module/monitor_projector/include)
+    target_link_libraries(projector PUBLIC monitorProjector)
+    target_compile_definitions(projector PUBLIC WITH_MONITOR_PROJECTOR)
 endif()

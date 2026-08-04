@@ -17,9 +17,17 @@ else()
     set(SLMASTER_WITH_HUARAY_DEFAULT OFF)
 endif()
 option(SLMASTER_WITH_HUARAY "build huaray camera backend" ${SLMASTER_WITH_HUARAY_DEFAULT})
+# Universal UVC/file/sequence backend — always available, pure OpenCV.
+option(SLMASTER_WITH_OPENCV_CAMERA "build opencv camera backend" ON)
+
+find_package(OpenCV REQUIRED)
 
 if(SLMASTER_WITH_HUARAY)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/module/huaray_camera)
+endif()
+
+if(SLMASTER_WITH_OPENCV_CAMERA)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/module/opencv_camera)
 endif()
 
 if(BUILD_SLMASTER_SHARED)
@@ -44,4 +52,10 @@ if(SLMASTER_WITH_HUARAY)
     target_include_directories(camera PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/module/huaray_camera/include)
     target_link_libraries(camera PUBLIC huarayCamera)
     target_compile_definitions(camera PUBLIC WITH_HUARAY_CAMERA)
+endif()
+
+if(SLMASTER_WITH_OPENCV_CAMERA)
+    target_include_directories(camera PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/module/opencv_camera/include)
+    target_link_libraries(camera PUBLIC opencvCamera)
+    target_compile_definitions(camera PUBLIC WITH_OPENCV_CAMERA)
 endif()

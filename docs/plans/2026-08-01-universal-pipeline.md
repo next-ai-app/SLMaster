@@ -246,6 +246,12 @@ Add to `ubuntu.yml` and `macos.yml` as a non-blocking step first, blocking once 
 
 ## Phase 3 — Universal hardware backends (the actual "universal" payoff)
 
+**Status (2026-08-05): ✅ Tasks 3.1–3.4 done on macOS arm64** — `OpenCvCamera`
++ `MonitorProjector` implemented, factory-registered (`OpenCV` / "Monitor"),
+config schemas updated, 12 new tests green (25/25 total), quickstart in
+`docs/universal-quickstart.md`. Remaining: live-hardware validation (Task 3.4
+demo photos) and the CI matrix (Phase 5).
+
 **Objective:** any UVC webcam + any HDMI display/projector runs the full live pipeline — zero proprietary SDK.
 
 ### Task 3.1: OpenCV camera backend

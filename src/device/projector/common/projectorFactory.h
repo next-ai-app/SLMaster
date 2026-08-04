@@ -22,6 +22,10 @@
 #include "projectorDlpc34xxDual.h"
 #endif
 
+#ifdef WITH_MONITOR_PROJECTOR
+#include "monitorProjector.h"
+#endif
+
 #include "typeDef.h"
 
 /** @brief 结构光库 **/
@@ -51,7 +55,13 @@ class DEVICE_API ProjectorFactory {
             }
             // TODO@Evans Liu:增加DLP6500支持
 #else
-            (void)dlpEvm; // no proprietary projector backend compiled in on this platform
+            (void)dlpEvm; // no projector backend compiled in on this platform
+#endif
+#ifdef WITH_MONITOR_PROJECTOR
+            if ("Monitor" == dlpEvm) {
+                projector = new MonitorProjector();
+                projectoies_[dlpEvm] = projector;
+            }
 #endif
         }
 

@@ -158,6 +158,9 @@
                },
                {
                   "name" : "DLP6500"
+               },
+               {
+                  "name" : "Monitor"
                }
             ],
             "title" : "DLP Evm",
@@ -180,6 +183,17 @@
          },
          {
             "data" : "Huaray",
+            "enum" : [
+               {
+                  "name" : "Huaray"
+               },
+               {
+                  "name" : "Halcon"
+               },
+               {
+                  "name" : "OpenCV"
+               }
+            ],
             "title" : "2D Camera Manufactor",
             "type" : "string"
          },

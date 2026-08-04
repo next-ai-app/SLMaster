@@ -106,6 +106,32 @@ target_link_libraries(
     GTest::gtest_main
 )
 
+# Universal device backends (no hardware required: image-sequence camera,
+# virtual-display projector).
+add_executable(
+    TestOpencvCamera
+    ${CMAKE_CURRENT_SOURCE_DIR}/testOpencvCamera.cpp
+)
+
+target_link_libraries(
+    TestOpencvCamera
+    PUBLIC
+    slmaster
+    GTest::gtest_main
+)
+
+add_executable(
+    TestMonitorProjector
+    ${CMAKE_CURRENT_SOURCE_DIR}/testMonitorProjector.cpp
+)
+
+target_link_libraries(
+    TestMonitorProjector
+    PUBLIC
+    slmaster
+    GTest::gtest_main
+)
+
 include(GoogleTest)
 
 # Tests reference data via ../../data — resolves to the repo's data/ dir only
@@ -114,6 +140,8 @@ gtest_discover_tests(TestLasterLine WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 gtest_discover_tests(TestShiftGrayCodePattern WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 gtest_discover_tests(TestInterzoneSinusFourGrayscalePattern WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 gtest_discover_tests(TestThreeFrequencyHeterodynePattern WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+gtest_discover_tests(TestOpencvCamera WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+gtest_discover_tests(TestMonitorProjector WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 if(TARGET TestHuarayCamera)
     gtest_discover_tests(TestHuarayCamera WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

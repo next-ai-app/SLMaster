@@ -22,19 +22,30 @@
 #include "huarayCamera.h"
 #endif
 
-/** @brief 结构光库 **/
+#ifdef WITH_OPENCV_CAMERA
+#include "opencvCamera.h"
+#endif
+
+/** @brief slmaster **/
 namespace slmaster {
 /** @brief 设备库 **/
 namespace device {
-/** @brief 相机工厂 **/
+/** @brief 相机工厂类 **/
 class DEVICE_API CameraFactory {
   public:
-    CameraFactory(){};
-    /**@brief 制造商*/
-    enum CameraManufactor {
-        Huaray = 0, // 华睿科技
-        Halcon      // 海康机器人
-    };
+    /** @brief 相机厂商 **/
+    enum CameraManufactor { Huaray = 0, Halcon, OpenCV };
+
+    /** @brief Map config string to manufactor enum ("Huaray"/"Halcon"/"OpenCV"). */
+    static CameraManufactor manufactorFromString(const std::string &name) {
+        if (name == "Huaray") {
+            return Huaray;
+        }
+        if (name == "OpenCV") {
+            return OpenCV;
+        }
+        return Halcon; // historical fallback branch
+    }
 
     Camera *getCamera(std::string cameraUserId, CameraManufactor manufactor) {
         Camera *camera = nullptr;
@@ -53,7 +64,13 @@ class DEVICE_API CameraFactory {
                 cameras_[cameraUserId] = camera;
             }
 #else
-            (void)manufactor; // no proprietary camera backend compiled in on this platform
+            (void)manufactor; // no camera backend compiled in on this platform
+#endif
+#ifdef WITH_OPENCV_CAMERA
+            if (OpenCV == manufactor) {
+                camera = new OpenCvCamera(cameraUserId);
+                cameras_[cameraUserId] = camera;
+            }
 #endif
         }
 
