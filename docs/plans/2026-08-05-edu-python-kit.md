@@ -1,5 +1,17 @@
 # Edu Python Kit (sl_edu) Implementation Plan
 
+> **Status (2026-08-05): ✅ BUILT** — all tasks complete. 18/18 pytest green;
+> all 7 notebooks execute headless; nb05 reconstructs the real dataset scene
+> (159k points, output_scan.ply). Latest commit `30d6a05` pushed to
+> next-ai-app/SLMaster `feat/universal-pipeline`.
+> Notable build-time findings: (1) C++ generator = sawtooth phase + mirror-
+> recursive gray code rotated by half-period — naive cos generator does NOT
+> decode; (2) OpenCV 5 python API: nested `SinusoidalPattern.Params`,
+> `shiftValue` not `shiftTime`, `computePhaseMap` returns tuple;
+> (3) cv2.structured_light convention mismatch — unusable as oracle, replaced
+> by C++ gtest golden values (pixel-exact anchors); (4) triangulation P2 must
+> use inverse extrinsic [R^T|-R^T·T].
+
 > **For Hermes:** Implement task-by-task. Each task ends with a verification command + commit.
 
 **Goal:** A pure-Python structured-light teaching kit (`edu/` in the fork) that re-implements SLMaster's core pipeline in numpy/OpenCV as a 7-notebook course, verified against the repo's own datasets.
