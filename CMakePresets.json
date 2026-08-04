@@ -1,0 +1,50 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "linux-core",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/linux-core",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BUILD_GUI": "OFF",
+        "BUILD_TEST": "ON",
+        "BUILD_PERF": "OFF"
+      }
+    },
+    {
+      "name": "linux-gui",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/linux-gui",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BUILD_GUI": "ON",
+        "BUILD_TEST": "ON",
+        "BUILD_PERF": "OFF"
+      }
+    },
+    {
+      "name": "macos-core",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/macos-core",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BUILD_GUI": "OFF",
+        "BUILD_TEST": "ON",
+        "BUILD_PERF": "OFF"
+      }
+    },
+    {
+      "name": "macos-gui",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/macos-gui",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BUILD_GUI": "ON",
+        "BUILD_TEST": "ON",
+        "BUILD_PERF": "OFF",
+        "CMAKE_PREFIX_PATH": "/opt/homebrew/opt/qt@5"
+      }
+    }
+  ]
+}

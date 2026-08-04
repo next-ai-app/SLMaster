@@ -16,8 +16,11 @@
 #include <unordered_map>
 
 #include "projector.h"
+
+#ifdef WITH_DLPC_PROJECTOR
 #include "projectorDlpc34xx.h"
 #include "projectorDlpc34xxDual.h"
+#endif
 
 #include "typeDef.h"
 
@@ -36,6 +39,7 @@ class DEVICE_API ProjectorFactory {
         if (projectoies_.count(dlpEvm)) {
             return projectoies_[dlpEvm];
         } else {
+#ifdef WITH_DLPC_PROJECTOR
             if ("DLP4710" == dlpEvm) {
                 projector = new ProjectorDlpc34xxDual();
                 projectoies_[dlpEvm] = projector;
@@ -46,6 +50,9 @@ class DEVICE_API ProjectorFactory {
                 projectoies_[dlpEvm] = projector;
             }
             // TODO@Evans Liu:增加DLP6500支持
+#else
+            (void)dlpEvm; // no proprietary projector backend compiled in on this platform
+#endif
         }
 
         return projector;

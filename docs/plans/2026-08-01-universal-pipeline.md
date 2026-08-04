@@ -141,7 +141,8 @@ endif()
 Ubuntu (Upcloud box or GHA):
 
 ```bash
-sudo apt update && sudo apt install -y build-essential cmake ninja-build libopencv-dev
+sudo apt update && sudo apt install -y build-essential cmake ninja-build \
+  libopencv-dev libpcl-dev libeigen3-dev
 cmake --preset linux-core
 cmake --build build/linux-core --parallel
 ```
@@ -149,10 +150,12 @@ cmake --build build/linux-core --parallel
 macOS (Apple Silicon, Homebrew):
 
 ```bash
-brew install cmake ninja opencv
+brew install cmake ninja opencv eigen pcl
 cmake --preset macos-core
 cmake --build build/macos-core --parallel
 ```
+
+> Note: PCL + Eigen3 are required even for the core build — `src/algorithm` links PCL (point-cloud output of `recoverDepth`). CPU path is automatic when OpenCV has no `cudev` module (brew/apt OpenCV builds never do).
 
 **Expected:** OpenCV version drift on both (ubuntu-22.04: 4.5.4, brew: 4.12+) may emit deprecations vs pinned 4.8 — fix any hard errors; keep a `docs/porting-notes.md` log of every fix (each becomes its own micro-commit).
 
@@ -187,7 +190,7 @@ Exact match for integer/count metrics; relative tolerance (e.g. 1e-5) for float 
 
 ### Task 1.3: GHA cross-platform core jobs
 
-**Files:** Create `.github/workflows/ubuntu.yml` — ubuntu-22.04, apt deps, `cmake --preset linux-core`, build, `ctest`. Create `.github/workflows/macos.yml` — macos-14 (arm64), `brew install cmake ninja opencv`, `cmake --preset macos-core`, build, `ctest`. Hardware-gated tests excluded via env flag on both.
+**Files:** Create `.github/workflows/ubuntu.yml` — ubuntu-22.04, `apt install build-essential cmake ninja-build libopencv-dev libpcl-dev libeigen3-dev`, `cmake --preset linux-core`, build, `ctest`. Create `.github/workflows/macos.yml` — macos-14 (arm64), `brew install cmake ninja opencv eigen pcl`, `cmake --preset macos-core`, build, `ctest`. Hardware-gated tests excluded on both (backends default OFF → test targets not built).
 
 **Verify:** PR shows green checkmarks for `windows.yml`, `ubuntu.yml` and `macos.yml`.
 

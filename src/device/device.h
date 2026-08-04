@@ -13,11 +13,15 @@
 #define __SLMASTER_DEVICES_H_
 
 #include "camera/common/camera.h"
+#ifdef WITH_HUARAY_CAMERA
 #include "camera/module/huaray_camera/include/huarayCamera.h"
+#endif
 #include "camera/common/cameraFactory.h"
 #include "camera/common/safeQueue.hpp"
+#ifdef WITH_DLPC_PROJECTOR
 #include "projector/module/projector_dlpc_api/include/projectorDlpc34xx.h"
 #include "projector/module/projector_dlpc_api/include/projectorDlpc34xxDual.h"
+#endif
 #include "projector/common/projectorFactory.h"
 #include "projector/common/projector.h"
 

@@ -8,7 +8,20 @@ set(PROJECTOR_ROOT_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/common/projector.h
 set(PROJECTOR_ROOT_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/common/projectorFactory.cpp)
 
 find_package(OpenCV REQUIRED)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/module/projector_dlpc_api)
+
+if(WIN32)
+    set(SLMASTER_WITH_DLPC_DEFAULT ON)
+else()
+    # DLPC347x path depends on Cypress CyUSBSerial (+ setupapi on Windows);
+    # gated off until a Linux/macOS I2C backend lands
+    # (see docs/plans/2026-08-01-universal-pipeline.md Phase 4).
+    set(SLMASTER_WITH_DLPC_DEFAULT OFF)
+endif()
+option(SLMASTER_WITH_DLPC "build DLPC347x projector backend" ${SLMASTER_WITH_DLPC_DEFAULT})
+
+if(SLMASTER_WITH_DLPC)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/module/projector_dlpc_api)
+endif()
 
 if(BUILD_SLMASTER_SHARED)
     add_library(projector SHARED)
@@ -20,10 +33,10 @@ endif()
 
 target_sources(projector PUBLIC ${PROJECTOR_ROOT_HEADER} ${PROJECTOR_ROOT_SOURCES})
 
-target_include_directories(projector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/common ${CMAKE_CURRENT_SOURCE_DIR}/module/projector_dlpc_api/include)
+target_include_directories(projector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/common)
 
-target_link_libraries(
-    projector
-    PUBLIC
-    projectorDlpcApi
-)
+if(SLMASTER_WITH_DLPC)
+    target_include_directories(projector PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/module/projector_dlpc_api/include)
+    target_link_libraries(projector PUBLIC projectorDlpcApi)
+    target_compile_definitions(projector PUBLIC WITH_DLPC_PROJECTOR)
+endif()

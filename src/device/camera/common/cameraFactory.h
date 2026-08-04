@@ -15,7 +15,9 @@
 #include <string>
 #include <unordered_map>
 
+#ifdef WITH_HUARAY_CAMERA
 #include "huarayCamera.h"
+#endif
 
 /** @brief 结构光库 **/
 namespace slmaster {
@@ -37,6 +39,7 @@ class DEVICE_API CameraFactory {
         if (cameras_.count(cameraUserId)) {
             return cameras_[cameraUserId];
         } else {
+#ifdef WITH_HUARAY_CAMERA
             if (Huaray == manufactor) {
                 camera = new HuarayCammera(cameraUserId);
                 cameras_[cameraUserId] = camera;
@@ -46,6 +49,9 @@ class DEVICE_API CameraFactory {
                 camera = new HuarayCammera(cameraUserId);
                 cameras_[cameraUserId] = camera;
             }
+#else
+            (void)manufactor; // no proprietary camera backend compiled in on this platform
+#endif
         }
 
         return camera;
